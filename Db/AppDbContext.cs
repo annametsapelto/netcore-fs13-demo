@@ -1,3 +1,4 @@
+using System.Reflection;
 namespace NETCoreDemo.Db;
 
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,7 @@ public class AppDbContext : DbContext
         var connString = _config.GetConnectionString("DefaultConnection");
         optionsBuilder
             .UseNpgsql(connString)
+            .AddInterceptors(new AppDbContextSaveChangesInterceptor())
             .UseSnakeCaseNamingConvention();
     }
 
@@ -38,8 +40,39 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Course>()
             .HasIndex(c => c.Name);
 
-        //base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Student>()
+            .HasIndex(s => s.Email)
+            .IsUnique();
+
+        // TODO: Do this in a better way using loop
+        modelBuilder.Entity<Student>()
+            .Property(s => s.CreatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+        modelBuilder.Entity<Student>()
+            .Property(s => s.UpdatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+        modelBuilder.Entity<Address>()
+            .Property(s => s.CreatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+        modelBuilder.Entity<Address>()
+            .Property(s => s.UpdatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+        modelBuilder.Entity<Student>()
+            .HasOne(s => s.Address)
+            .WithOne()
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // Always load Address along with the Student
+        // modelBuilder.Entity<Student>().Navigation(s => s.Address).AutoInclude();
+
+        base.OnModelCreating(modelBuilder);
     }
 
     public DbSet<Course> Courses { get; set; } = null!;
+    public DbSet<Student> Students { get; set; } = null!;
+    public DbSet<Address> Addresses { get; set; } = null!;
 }
