@@ -18,4 +18,11 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<Course> Courses { get; set; }
+    public DbSet<Book> Books { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelbuilder)
+    {
+        modelbuilder.Entity<Course>().HasIndex(c => c.Name);
+        base.OnModelCreating(modelbuilder);
+    }
 }

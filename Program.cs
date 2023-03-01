@@ -31,6 +31,7 @@ builder.Services.AddSingleton<ICounterService, RequestCounterService>();
 // Change this to different lifetime and see how it works
 builder.Services.AddTransient<IDemoService, DemoService>();
 builder.Services.AddSingleton<ICourseService, FakeCourseSerivce>();
+builder.Services.AddScoped<IBookService, FakeBookService>();
 
 builder.Services.AddSingleton<ICrudService<Student, StudentDTO>, FakeCrudService<Student, StudentDTO>>();
 
