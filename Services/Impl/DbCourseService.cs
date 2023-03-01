@@ -11,6 +11,18 @@ public class DbCourseSerivce : DbCrudService<Course, CourseDTO>, ICourseService
     {
     }
 
+    public override async Task<Course?> GetAsync(int id)
+    {
+        var course = await base.GetAsync(id);
+        if (course is null)
+        {
+            return null;
+        }
+        // Explicit loading
+        await _dbContext.Entry(course).Collection(c => c.Students).LoadAsync();
+        return course;
+    }
+
     public async Task<ICollection<Course>> GetCoursesByStatusAsync(Course.CourseStatus status)
     {
         return await _dbContext.Courses
