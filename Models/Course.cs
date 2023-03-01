@@ -15,6 +15,8 @@ public class Course : BaseModel
     [Column(TypeName = "smallint")]
     public int Size { get; set; }
 
+    public ICollection<Student> Students { get; set; } = null!;
+
     public enum CourseStatus
     {
         NotStarted,
