@@ -1,4 +1,3 @@
-using System;
 using NETCoreDemo.Services;
 using System.Text.Json.Serialization;
 using NETCoreDemo.Models;
@@ -12,7 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddControllers()
-    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 builder.Services.AddDbContext<AppDbContext>();
 
@@ -30,10 +32,10 @@ builder.Services.AddSingleton<ICounterService, RequestCounterService>();
 
 // Change this to different lifetime and see how it works
 builder.Services.AddTransient<IDemoService, DemoService>();
-builder.Services.AddSingleton<ICourseService, FakeCourseSerivce>();
-builder.Services.AddScoped<IBookService, FakeBookService>();
 
-builder.Services.AddSingleton<ICrudService<Student, StudentDTO>, FakeCrudService<Student, StudentDTO>>();
+builder.Services.AddScoped<ICourseService, DbCourseSerivce>();
+
+builder.Services.AddScoped<IStudentService, DbStudentService>();
 
 builder.Services.Configure<CourseSetting>(builder.Configuration.GetSection("MyCourseSettings"));
 

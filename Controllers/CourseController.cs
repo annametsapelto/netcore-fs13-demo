@@ -14,9 +14,12 @@ public class CourseController : CrudController<Course, CourseDTO>
         _service = service;
     }
 
-    [HttpGet]
-    public ICollection<Course> GetCoursesByStatus([FromQuery] Course.CourseStatus status)
+    // TODO: Combine this with the GetAll() method from the base class
+    // 1. If no status is given on query string, return all
+    // 2. Otherwise, filter the courses by status
+    [HttpGet("search")]
+    public async Task<ICollection<Course>> GetCoursesByStatus([FromQuery] Course.CourseStatus status)
     {
-        return _service.GetCoursesByStatus(status);
+        return await _service.GetCoursesByStatusAsync(status);
     }
 }
